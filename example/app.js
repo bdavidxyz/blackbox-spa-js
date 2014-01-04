@@ -43,12 +43,19 @@ function createTodo(req, res, next) {
 }
 
 function updateTodo(req, res, next) {
+    console.log("got it, update");
     console.log(req.method + ' ' + req.url + ' - updateTodo');
-    console.log('Payload: ' + JSON.stringify(req.body));
+    console.log('Payload: ' + req.body);
     var todo = findTodoById(parseInt(req.params.id, 10));
-    todo.title = req.body.title;
-    todo.completed = req.body.completed;
-    todo.order = req.body.order;
+    //todo.title = req.body.title;
+    //todo.completed = req.body.completed === "true";
+    var updatedTodo = {
+        id: parseInt(req.params.id, 10),
+        title: req.body.title,
+        completed: req.body.completed === "true"
+    };
+    todo.title = updatedTodo.title;
+    todo.completed = updatedTodo.completed;
     res.json(todo);
 }
 

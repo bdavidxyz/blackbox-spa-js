@@ -16,8 +16,7 @@ Storage.prototype.getItem = (function(key) {
          }
       });
       return JSON.stringify(result);
-      //return this.call(localStorage, key);
-
+      
    } else {
       return this.call(localStorage, key);
    }
@@ -38,13 +37,15 @@ Storage.prototype.setItem = (function(key, value) {
 
    if (currentValues.length === currentTodos.length + 1) { // addition
 
-      var addedItem = _.last(currentValues);
-      addItem(key, addedItem);
+      currentValues[currentValues.length - 1].id = Math.floor(Math.random() * 10000);
 
       $.ajax({
          url: "/todos",
          type: "POST",
-         data: _.last(currentValues)
+         processData: false,
+         contentType: 'application/json; charset=utf-8',
+         dataType: 'json',
+         data: JSON.stringify(currentValues[currentValues.length - 1])
       });
 
    } else if (currentValues.length === currentTodos.length) { // modification
@@ -55,6 +56,9 @@ Storage.prototype.setItem = (function(key, value) {
       $.ajax({
          url: "/todos/" + modifiedValue.id,
          type: "PUT",
+         processData: false,
+         contentType: 'application/json; charset=utf-8',
+         dataType: 'json',
          data: JSON.stringify(modifiedValue)
       });
 
@@ -66,7 +70,6 @@ Storage.prototype.setItem = (function(key, value) {
       $.ajax({
          url: "/todos/" + deletedValue.id,
          type: "DELETE",
-         data: JSON.stringify(deletedValue)
       });
 
    }
@@ -75,22 +78,6 @@ Storage.prototype.setItem = (function(key, value) {
 
 }).bind(Storage.prototype.setItem);
 
-
-/*
- *
- * The current version of blackbox-spa use localStorage,
- * some operations have to be escaped from the examples.
- *
- */
-var blackList = function(key) {
-
-   if (this === window.localStorage) return true;
-   if (key === "PUT") return true;
-   if (key === "POST") return true;
-   if (key === "DELETE") return true;
-   return false;
-
-};
 
 var whiteList = function(key) {
    if (key === "todos-jquery") return true;

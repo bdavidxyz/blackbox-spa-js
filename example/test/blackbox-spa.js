@@ -30394,6 +30394,8 @@ angular.scenario = angular.scenario || {};
  	};
  });
 
+var lastNonGetRequest = [];
+
 angular.scenario.dsl('activateXHRlog', function() {
  	return function(selector, functionName /*, args */) {
  		var args = Array.prototype.slice.call(arguments, 2);
@@ -30419,6 +30421,7 @@ angular.scenario.dsl('activateXHRlog', function() {
                         this.body = body;
                         send.call(this, body);
                         if (this.method.toUpperCase() !== "GET") {
+                        	//var bodyStr = JSON.stringify(this.body);
                         	localStorage.setItem(this.method.toUpperCase(), JSON.stringify({method:this.method, url:this.url, body:this.body}));
                         }
                     };
