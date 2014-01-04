@@ -38,7 +38,7 @@ Storage.prototype.setItem = (function(key, value) {
    if (currentValues.length === currentTodos.length + 1) { // addition
 
       // more or less unique id
-      currentValues[currentValues.length - 1].id = Math.floor(Math.random() * 10000);
+      currentValues[currentValues.length - 1].id = currentValues.length;
 
       $.ajax({
          url: "/todos",

@@ -38,38 +38,24 @@ describe('Starting application', function() {
         expect(lastRequest("PUT").url()).toEqual("/todos/1");
     });
     it('Should be able to add a new item', function() {
-        
-// $('#new-todo').val('456');
-// $('#new-todo').change();
-
-// var e = jQuery.Event( 'keyup', { which: 13 } );
-// $('#new-todo').trigger(e);
-        pause();
-        //element('input#new-todo').val("voila");
-        jQueryFunction('input#new-todo', 'val', 'voila2');
-        pause();
+        jQueryFunction('input#new-todo', 'val', 'anotherTodo');
         jQueryFunction('input#new-todo', 'change');
-        pause();
         fireEnterOn('input#new-todo');
-
-
-        // // hack for input from keyboard
-        // var evtInput = document.createEvent('Event');
-        // evtInput.initEvent('input', true, false);
-        // element('input#new-todo').query(function(el, done) {
-        //     el[0].dispatchEvent(evtInput);
-        //     done();
-        // });
-        pause();
+        expect(lastRequest("POST").body()).toEqual({
+            "title": "anotherTodo",
+            "completed": false,
+            "id": 4
+        });
+        expect(lastRequest("POST").url()).toEqual("/todos");
     });
     it('Should be able to toggle completion', function() {
-        element('input.toggle:eq(1)').click();
+        element('input.toggle:eq(3)').click();
         expect(lastRequest("PUT").body()).toEqual({
-            "title": "item1",
+            "title": "anotherTodo",
             "completed": true,
-            "id": 1
+            "id": 4
         });
-        expect(lastRequest("PUT").url()).toEqual("/todos/1");
+        expect(lastRequest("PUT").url()).toEqual("/todos/4");
     });
     it('Should be able to edit task description', function() {
         //
