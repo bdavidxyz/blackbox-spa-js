@@ -13,7 +13,6 @@ for (var i = 0; i < 3; i++) {
     todos.push({
         id: i,
         title: 'item' + i,
-        order: i,
         completed: (i % 2 === 0)
     });
 }
@@ -32,13 +31,13 @@ function getTodos(req, res, next) {
 
 function createTodo(req, res, next) {
     console.log(req.method + ' ' + req.url + ' - createTodo');
+    var createdTodo = req.body;
     console.log('Payload: ' + JSON.stringify(req.body));
     var todo = {
-        id: todos.length,
+        id: parseInt(req.body.id, 10),
         title: req.body.title,
-        order: req.body.order,
-        completed: req.body.completed
-    }
+        completed: req.body.completed === "true"
+    };
     todos.push(todo);
     res.json(todo);
 }
@@ -46,7 +45,7 @@ function createTodo(req, res, next) {
 function updateTodo(req, res, next) {
     console.log(req.method + ' ' + req.url + ' - updateTodo');
     console.log('Payload: ' + JSON.stringify(req.body));
-    var todo = findTodoById(parseInt(req.params.id));
+    var todo = findTodoById(parseInt(req.params.id, 10));
     todo.title = req.body.title;
     todo.completed = req.body.completed;
     todo.order = req.body.order;
@@ -55,7 +54,7 @@ function updateTodo(req, res, next) {
 
 function deleteTodo(req, res, next) {
     console.log(req.method + ' ' + req.url + ' - deleteTodo');
-    var id = parseInt(req.params.id);
+    var id = parseInt(req.params.id, 10);
     todos = _.reject(todos, function(todo) {
         return todo.id === id;
     });
