@@ -1,0 +1,9 @@
+{
+    "name": "node-backbone-todomvc",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+        "express": "3.3.5",
+        "underscore": "1.5.1"
+    }
+}

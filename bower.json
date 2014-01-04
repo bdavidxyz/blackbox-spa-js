@@ -1,0 +1,5 @@
+{
+  "name": "blackbox-spa-js",
+  "version": "1.0.0",
+  "main": "./blackbox-spa.js"
+}
