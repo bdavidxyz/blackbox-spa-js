@@ -37,6 +37,7 @@ Storage.prototype.setItem = (function(key, value) {
 
    if (currentValues.length === currentTodos.length + 1) { // addition
 
+      // more or less unique id
       currentValues[currentValues.length - 1].id = Math.floor(Math.random() * 10000);
 
       $.ajax({
@@ -53,6 +54,12 @@ Storage.prototype.setItem = (function(key, value) {
          return _.isEmpty(_.where(currentTodos, e));
       });
 
+      // find correct id for modifiedValue
+      var currentIndex = _.indexOf(currentValues, modifiedValue);
+      var currentId = currentTodos[currentIndex].id;
+      modifiedValue.id = currentId;
+      currentValues[currentIndex].id = currentId;
+
       $.ajax({
          url: "/todos/" + modifiedValue.id,
          type: "PUT",
@@ -67,6 +74,9 @@ Storage.prototype.setItem = (function(key, value) {
          return _.isEmpty(_.where(currentValues, e));
       });
 
+      // find correct id for deletedValue
+      deletedValue.id = currentTodos[_.indexOf(currentTodos, deletedValue)].id;
+
       $.ajax({
          url: "/todos/" + deletedValue.id,
          type: "DELETE",
@@ -80,7 +90,11 @@ Storage.prototype.setItem = (function(key, value) {
 
 
 var whiteList = function(key) {
-   if (key === "todos-jquery") return true;
+   return _.contains([
+      "todos-jquery", 
+      "todo-gwt", 
+      "todos-knockoutjs"
+      ], key);
 };
 
 /*

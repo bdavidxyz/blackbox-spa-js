@@ -52,7 +52,7 @@ function updateTodo(req, res, next) {
     var updatedTodo = {
         id: parseInt(req.params.id, 10),
         title: req.body.title,
-        completed: req.body.completed === "true"
+        completed: req.body.completed
     };
     todo.title = updatedTodo.title;
     todo.completed = updatedTodo.completed;
