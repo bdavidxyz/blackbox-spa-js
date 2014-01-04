@@ -22,6 +22,8 @@ Storage.prototype.getItem = (function(key) {
    }
 }).bind(Storage.prototype.getItem);
 
+var startingIdCounter = 3;
+
 Storage.prototype.setItem = (function(key, value) {
    console.log("setItem");
 
@@ -38,7 +40,8 @@ Storage.prototype.setItem = (function(key, value) {
    if (currentValues.length === currentTodos.length + 1) { // addition
 
       // more or less unique id
-      currentValues[currentValues.length - 1].id = currentValues.length;
+      currentValues[currentValues.length - 1].id = startingIdCounter + 1;
+      startingIdCounter += 1;
 
       $.ajax({
          url: "/todos",

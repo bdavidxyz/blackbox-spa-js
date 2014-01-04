@@ -30789,15 +30789,12 @@
 				var e = $.Event('keyup', {
 					which: 13
 				});
-				console.log(elem[0]);
-				$(elem[0]).trigger(e);
+				//	$(elem[0]).trigger(e);
 
-				done(null, {});
+				done(null, $(elem[0]).trigger(e));
 			});
 		};
 	});
-
-	var lastNonGetRequest = [];
 
 	angular.scenario.dsl('activateXHRlog', function() {
 		return function(selector, functionName /*, args */ ) {
