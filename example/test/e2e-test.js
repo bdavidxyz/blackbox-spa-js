@@ -9,7 +9,7 @@
 /*global lastRequest */
 /*global ROOT_URL */
 /*global activateXHRlog */
-/*global breath */
+/*global sleep */
 /*global fireEnterOn */
 /*global QueryString */
 

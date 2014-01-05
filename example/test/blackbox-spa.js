@@ -30801,37 +30801,13 @@
 		};
 	});
 
-	angular.scenario.dsl('addOneCharTo', function() {
-		return function(selector, functionName /*, args */ ) {
-			var args = Array.prototype.slice.call(arguments, 2);
-			return this.addFutureAction("Adding one char", function($window, $document, done) {
-				var $ = $window.$; // jQuery inside the iframe
-				var elem = $(selector);
-				if (!elem.length) {
-					return done('Selector ' + selector + ' did not match any elements.');
-				}
-				var e = $.Event("keydown");
-				e.which = 65;
-				e.keyCode = 65;
-				var f = $.Event("keypress");
-				f.which = 97;
-				f.keyCode = 97;
-				var g = $.Event("keyup");
-				g.which = 65;
-				g.keyCode = 65;
-				$(elem[0]).focus().trigger(e).trigger(f).trigger(g);
-				done(null, null);
-			});
-		};
-	});
+	var lastRequest = {};
 
 	angular.scenario.dsl('activateXHRlog', function() {
 		return function(selector, functionName /*, args */ ) {
 			var args = Array.prototype.slice.call(arguments, 2);
 			return this.addFutureAction(functionName, function($window, $document, done) {
-
-				//clear localStorage
-				localStorage.clear();
+				
 
 				//Redefine open
 				(function(open) {
@@ -30851,21 +30827,55 @@
 						// Do some magic
 						console.log("sent : " + body);
 						this.body = body;
-						send.call(this, body);
 						if (this.method.toUpperCase() !== "GET") {
-							//var bodyStr = JSON.stringify(this.body);
-							localStorage.setItem(this.method.toUpperCase(), JSON.stringify({
-								method: this.method,
+							var bodyStr = JSON.stringify(this.body);
+							
+							lastRequest[this.method] = {
 								url: this.url,
-								body: this.body
-							}));
+								body: this.body 		
+							}
+
 						}
+						send.call(this, body);
 					};
 				})($window.XMLHttpRequest.prototype.send);
 
 
 				done(null, {});
 			});
+		};
+	});
+
+	angular.scenario.dsl('lastRequest', function() {
+
+		var chain = {};
+		chain.body = function() {
+			return this.addFutureAction("last " + chain.verb + " request body, ",
+				function($window, $document, done) {
+					try {
+						console.log("lastRequest " + JSON.stringify(lastRequest));
+						done(null, JSON.parse(lastRequest[chain.verb].body));
+					} catch (e) {
+						done(null, 0);
+					}
+				});
+		};
+		chain.url = function() {
+			return this.addFutureAction("last " + chain.verb + " request url, ",
+				function($window, $document, done) {
+					try {
+						//console.log("hello");
+						//console.log("debug " + lastRequest[chain.verb].url);
+						done(null, lastRequest[chain.verb].url);
+					} catch (e) {
+						done(null, 0);
+					}
+				});
+		};
+
+		return function(verb) {
+			chain.verb = verb;
+			return chain;
 		};
 	});
 
@@ -32740,37 +32750,8 @@
 			return chain;
 		};
 	});
-
-	angular.scenario.dsl('lastRequest', function() {
-
-		var chain = {};
-		chain.body = function() {
-			return this.addFutureAction("last " + chain.verb + " request body, ",
-				function($window, $document, done) {
-					try {
-						done(null, JSON.parse(JSON.parse(localStorage.getItem(chain.verb)).body));
-					} catch (e) {
-						done(null, 0);
-					}
-				});
-		};
-		chain.url = function() {
-			return this.addFutureAction("last " + chain.verb + " request url, ",
-				function($window, $document, done) {
-					try {
-						done(null, JSON.parse(localStorage.getItem(chain.verb)).url);
-					} catch (e) {
-						done(null, 0);
-					}
-				});
-		};
-
-		return function(verb) {
-			chain.verb = verb;
-			return chain;
-		};
-	});
-
+	
+	
 	/**
 	 * Matchers for implementing specs. Follows the Jasmine spec conventions.
 	 */
