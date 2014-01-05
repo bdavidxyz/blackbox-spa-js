@@ -30780,18 +30780,47 @@
 	angular.scenario.dsl('fireEnterOn', function() {
 		return function(selector, functionName /*, args */ ) {
 			var args = Array.prototype.slice.call(arguments, 2);
-			return this.addFutureAction(functionName, function($window, $document, done) {
+			return this.addFutureAction("firing ENTER keyboard event", function($window, $document, done) {
 				var $ = $window.$; // jQuery inside the iframe
 				var elem = $(selector);
 				if (!elem.length) {
 					return done('Selector ' + selector + ' did not match any elements.');
 				}
-				var e = $.Event('keyup', {
-					which: 13
-				});
-				//	$(elem[0]).trigger(e);
+				var e = $.Event("keydown");
+				e.which = 13;
+				e.keyCode = 13;
+				var f = $.Event("keypress");
+				f.which = 13;
+				f.keyCode = 13;
+				var g = $.Event("keyup");
+				g.which = 13;
+				g.keyCode = 13;
+				$(elem[0]).focus().trigger(e).trigger(f).trigger(g);
+				done(null, null);
+			});
+		};
+	});
 
-				done(null, $(elem[0]).trigger(e));
+	angular.scenario.dsl('addOneCharTo', function() {
+		return function(selector, functionName /*, args */ ) {
+			var args = Array.prototype.slice.call(arguments, 2);
+			return this.addFutureAction("Adding one char", function($window, $document, done) {
+				var $ = $window.$; // jQuery inside the iframe
+				var elem = $(selector);
+				if (!elem.length) {
+					return done('Selector ' + selector + ' did not match any elements.');
+				}
+				var e = $.Event("keydown");
+				e.which = 65;
+				e.keyCode = 65;
+				var f = $.Event("keypress");
+				f.which = 97;
+				f.keyCode = 97;
+				var g = $.Event("keyup");
+				g.which = 65;
+				g.keyCode = 65;
+				$(elem[0]).focus().trigger(e).trigger(f).trigger(g);
+				done(null, null);
 			});
 		};
 	});

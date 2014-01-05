@@ -11,6 +11,7 @@
 /*global activateXHRlog */
 /*global pause */
 /*global fireEnterOn */
+/*global QueryString */
 
 "use strict";
 
@@ -18,7 +19,7 @@
 describe('Starting application', function() {
     it('Should get all items', function() {
         // set up
-        browser().navigateTo("/" + ROOT_URL);
+        browser().navigateTo("/" + QueryString.fw);
         activateXHRlog();
 
         // assert
@@ -30,6 +31,7 @@ describe('Starting application', function() {
     });
     it('Should be able to add a new item', function() {
         jQueryFunction('input#new-todo', 'val', 'anotherTodo');
+        jQueryFunction('input#new-todo', 'change');
         fireEnterOn('input#new-todo');
         expect(lastRequest("POST").body()).toEqual({
             "title": "anotherTodo",
@@ -38,7 +40,6 @@ describe('Starting application', function() {
         });
         expect(lastRequest("POST").url()).toEqual("/todos");
     });
-
     it('Should be able to modify an item', function() {
         element('input.toggle:eq(3)').click();
         expect(lastRequest("PUT").body()).toEqual({
@@ -48,7 +49,6 @@ describe('Starting application', function() {
         });
         expect(lastRequest("PUT").url()).toEqual("/todos/4");
     });
-    
     it('Should be able to delete an item', function() {
         element('li:eq(3) > div > button').click();
         expect(lastRequest("DELETE").url()).toEqual("/todos/4");
