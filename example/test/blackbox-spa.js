@@ -32287,19 +32287,6 @@
 		};
 	});
 
-	angular.scenario.dsl('breath', function() {
-		return function() {
-			return this.addFuture('take some fresh air...', function(done) {
-				this.emit('InteractiveBreath', this.spec, this.step);
-
-				this.$window.setTimeout(function() {
-					done(null, 0.5 * 1000);
-				}, 0.5 * 1000);
-				
-			});
-		};
-	});
-
 	/**
 	 * Usage:
 	 *    sleep(seconds) pauses the test for specified number of seconds
@@ -32755,6 +32742,7 @@
 	});
 
 	angular.scenario.dsl('lastRequest', function() {
+
 		var chain = {};
 		chain.body = function() {
 			return this.addFutureAction("last " + chain.verb + " request body, ",
@@ -32855,12 +32843,6 @@
 			var ui = lastStepUiMap[spec.id];
 			ui.find('.test-title').
 			html('paused... <a href="javascript:resume()">resume</a> when ready.');
-		});
-
-		runner.on('InteractiveBreath', function(spec) {
-			var ui = lastStepUiMap[spec.id];
-			ui.find('.test-title').
-			html('breathed...');
 		});
 
 		runner.on('SpecBegin', function(spec) {
