@@ -30830,6 +30830,9 @@
 			var args = Array.prototype.slice.call(arguments, 2);
 			return this.addFutureAction(functionName, function($window, $document, done) {
 
+				//clear localStorage
+				localStorage.clear();
+
 				//Redefine open
 				(function(open) {
 					$window.XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
@@ -32284,6 +32287,19 @@
 		};
 	});
 
+	angular.scenario.dsl('breath', function() {
+		return function() {
+			return this.addFuture('take some fresh air...', function(done) {
+				this.emit('InteractiveBreath', this.spec, this.step);
+
+				this.$window.setTimeout(function() {
+					done(null, 0.5 * 1000);
+				}, 0.5 * 1000);
+				
+			});
+		};
+	});
+
 	/**
 	 * Usage:
 	 *    sleep(seconds) pauses the test for specified number of seconds
@@ -32839,6 +32855,12 @@
 			var ui = lastStepUiMap[spec.id];
 			ui.find('.test-title').
 			html('paused... <a href="javascript:resume()">resume</a> when ready.');
+		});
+
+		runner.on('InteractiveBreath', function(spec) {
+			var ui = lastStepUiMap[spec.id];
+			ui.find('.test-title').
+			html('breathed...');
 		});
 
 		runner.on('SpecBegin', function(spec) {

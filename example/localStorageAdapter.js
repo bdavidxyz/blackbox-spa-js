@@ -7,16 +7,30 @@ Storage.prototype.getItem = (function(key) {
    console.log("getItem " + key);
    if (whiteList(key)) {
       var result = null;
-      $.ajax({
-         url: "/todos",
-         type: "GET",
-         async: false,
-         success: function(e) {
-            result = e;
-         }
-      });
+      // $.ajax({
+      //    url: "/todos",
+      //    type: "GET",
+      //    async: false,
+      //    success: function(e) {
+      //       result = e;
+      //    }
+      // });
+
+      var request = new XMLHttpRequest();
+      request.open('GET', '/todos', false); // `false` makes the request synchronous
+      request.send(null);
+
+      if (request.status === 200) {
+         result = JSON.parse(request.responseText);
+         console.log(typeof(result));
+      } else {
+         throw {
+            message: "unable to fetch todos"
+         };
+      }
+
       return JSON.stringify(result);
-      
+
    } else {
       return this.call(localStorage, key);
    }
@@ -25,17 +39,15 @@ Storage.prototype.getItem = (function(key) {
 var startingIdCounter = 3;
 
 Storage.prototype.setItem = (function(key, value) {
-   console.log("setItem");
+
+   console.log("setItem " + key + " " + value);
 
    if (!whiteList(key) || this === window.localStorage) {
       this.call(localStorage, key, value);
       return;
    }
 
-   // do what you want if setItem is called on localStorage
-   console.log("setItem " + key + " " + value);
-
-   var currentValues = JSON.parse(value);
+   var currentValues = prepareInput(key, JSON.parse(value));
 
    if (currentValues.length === currentTodos.length + 1) { // addition
 
@@ -94,25 +106,37 @@ Storage.prototype.setItem = (function(key, value) {
 
 var whiteList = function(key) {
    return _.contains([
-      "todos-jquery", 
-      "todo-gwt", 
+      "todos-jquery",
+      "todo-gwt",
       "todos-knockoutjs"
-      ], key);
+   ], key);
 };
 
-/*
- *
- * Format correctly a new item according to the framework used
- *
- */
-var addItem = function(framework, item) {
-   switch (framework) {
+var prepareInput = function(key, value) {
+
+   var result = [];
+
+   switch (key) {
       case "todos-jquery":
-         item.id = Date.now();
+         _.each(value, function(e) {
+            var newitem = _.pick(e, "completed", "title");
+            result.push(newitem);
+         });
+         break;
+      case "todos-knockoutjs":
+         _.each(value, function(e) {
+            if (!_.has(e, "completed")) {
+               e.completed = false;
+            }
+            var newitem = _.pick(e, "completed", "title");
+            result.push(newitem);
+         });
          break;
       default:
          throw {
             message: "unknow framework " + framework
          };
    }
+   return result;
+
 };

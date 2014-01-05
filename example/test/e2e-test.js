@@ -9,7 +9,7 @@
 /*global lastRequest */
 /*global ROOT_URL */
 /*global activateXHRlog */
-/*global pause */
+/*global breath */
 /*global fireEnterOn */
 /*global QueryString */
 
@@ -33,6 +33,7 @@ describe('Starting application', function() {
         jQueryFunction('input#new-todo', 'val', 'anotherTodo');
         jQueryFunction('input#new-todo', 'change');
         fireEnterOn('input#new-todo');
+        breath();
         expect(lastRequest("POST").body()).toEqual({
             "title": "anotherTodo",
             "completed": false,
@@ -42,6 +43,7 @@ describe('Starting application', function() {
     });
     it('Should be able to modify an item', function() {
         element('input.toggle:eq(3)').click();
+        breath();
         expect(lastRequest("PUT").body()).toEqual({
             "title": "anotherTodo",
             "completed": true,
@@ -51,6 +53,7 @@ describe('Starting application', function() {
     });
     it('Should be able to delete an item', function() {
         element('li:eq(3) > div > button').click();
+        breath();
         expect(lastRequest("DELETE").url()).toEqual("/todos/4");
     });
 });
