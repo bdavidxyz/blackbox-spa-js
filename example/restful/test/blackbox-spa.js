@@ -30803,10 +30803,26 @@
 
 	var lastRequest = {};
 
+	angular.scenario.dsl('activateLocalStorageLog', function() {
+		return function() {
+			return this.addFutureAction("activate localStorage log", function($window, $document, done) {
+				localStorage.clear();
+			});
+		};
+	});
+
+	angular.scenario.dsl('localStorageItem', function() {
+		return function(key) {
+			return this.addFutureAction("fetching " + key + " from localStorage", function($window, $document, done) {
+				done(null, localStorage.get(key));
+			});
+		};
+	});
+
 	angular.scenario.dsl('activateXHRlog', function() {
-		return function(selector, functionName /*, args */ ) {
+		return function() {
 			var args = Array.prototype.slice.call(arguments, 2);
-			return this.addFutureAction(functionName, function($window, $document, done) {
+			return this.addFutureAction("enable XHR log", function($window, $document, done) {
 				
 
 				//Redefine open
@@ -32808,7 +32824,7 @@
 
 		context.append(
 			'<div id="header">' +
-			'  <h1><span class="angular">AngularJS</span>: Scenario Test Runner</h1>' +
+			'  <h1><span class="angular">BlackboxJS</span>: Javascript SPA Test Runner</h1>' +
 			'  <ul id="status-legend" class="status-display">' +
 			'    <li class="status-error">0 Errors</li>' +
 			'    <li class="status-failure">0 Failures</li>' +

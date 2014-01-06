@@ -19,7 +19,7 @@
 describe('Starting application', function() {
     it('Should get all items', function() {
         // set up
-        browser().navigateTo("/" + QueryString.fw);
+        browser().navigateTo("/restful/" + QueryString.fw);
         activateXHRlog();
 
         // assert
