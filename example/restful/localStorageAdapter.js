@@ -55,14 +55,11 @@ Storage.prototype.setItem = (function(key, value) {
       currentValues[currentValues.length - 1].id = startingIdCounter + 1;
       startingIdCounter += 1;
 
-      $.ajax({
-         url: "/todos",
-         type: "POST",
-         processData: false,
-         contentType: 'application/json; charset=utf-8',
-         dataType: 'json',
-         data: JSON.stringify(currentValues[currentValues.length - 1])
-      });
+      var postRequest = new XMLHttpRequest();
+      postRequest.open("POST", "/todos");
+      postRequest.setRequestHeader("Content-type", "application/json; charset=utf-8");
+      postRequest.send(JSON.stringify(currentValues[currentValues.length - 1]));
+
 
    } else if (currentValues.length === currentTodos.length) { // modification
       var modifiedValue = _.find(currentValues, function(e) {
@@ -75,14 +72,10 @@ Storage.prototype.setItem = (function(key, value) {
       modifiedValue.id = currentId;
       currentValues[currentIndex].id = currentId;
 
-      $.ajax({
-         url: "/todos/" + modifiedValue.id,
-         type: "PUT",
-         processData: false,
-         contentType: 'application/json; charset=utf-8',
-         dataType: 'json',
-         data: JSON.stringify(modifiedValue)
-      });
+      var putRequest = new XMLHttpRequest();
+      putRequest.open("PUT", "/todos/" + modifiedValue.id);
+      putRequest.setRequestHeader("Content-type", "application/json; charset=utf-8");
+      putRequest.send(JSON.stringify(modifiedValue));
 
    } else if (currentValues.length === currentTodos.length - 1) { // deletion
       var deletedValue = _.find(currentTodos, function(e) {
@@ -92,10 +85,9 @@ Storage.prototype.setItem = (function(key, value) {
       // find correct id for deletedValue
       deletedValue.id = currentTodos[_.indexOf(currentTodos, deletedValue)].id;
 
-      $.ajax({
-         url: "/todos/" + deletedValue.id,
-         type: "DELETE",
-      });
+      var deleteRequest = new XMLHttpRequest();
+      deleteRequest.open("DELETE", "/todos/" + deletedValue.id);
+      deleteRequest.send();
 
    }
 
