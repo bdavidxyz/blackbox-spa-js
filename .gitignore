@@ -12,3 +12,7 @@ node_modules/
 
 # Package Files #
 *.zip
+
+# IDE folders or files #
+.idea/
+*.iml
