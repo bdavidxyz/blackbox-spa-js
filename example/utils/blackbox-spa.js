@@ -30806,6 +30806,31 @@
 			});
 		};
 	});
+    angular.scenario.dsl('fireEnterOnRoot', function() {
+        return function(selector, functionName /*, args */ ) {
+            var args = Array.prototype.slice.call(arguments, 2);
+            return this.addFutureAction("firing ENTER keyboard event", function($window, $document, done) {
+                //var $ = $window.$; // jQuery inside the iframe
+                var $ = $window.jQuery;
+                var elem = $(selector);
+                if (!elem.length) {
+                    return done('Selector ' + selector + ' did not match any elements.');
+                }
+                var e = $.Event("keydown");
+                e.which = 13;
+                e.keyCode = 13;
+                var f = $.Event("keypress");
+                f.which = 13;
+                f.keyCode = 13;
+                var g = $.Event("keyup");
+                g.which = 13;
+                g.keyCode = 13;
+                $(window.document).trigger(e).trigger(f).trigger(g);
+                done(null, null);
+
+            });
+        };
+    });
 
 	angular.scenario.dsl('appElement', function() {
 	  return function(selector, fn) {
@@ -30910,6 +30935,15 @@
 		};
 	});
 
+    angular.scenario.dsl('mouseover', function() {
+        return function(selector) {
+            return this.addFutureAction('Calling mouseover of given element', function($window, $document, done) {
+                var elements = $window.angular.element($document.elements());
+                elements.trigger('mouseover');
+                done();
+            });
+        };
+    });
 
 	/**
 	 * Defines a new matcher for use with the expects() statement. The value
