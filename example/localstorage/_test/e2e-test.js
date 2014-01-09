@@ -80,14 +80,14 @@ describe('Starting application', function() {
             expect(element('ul#todo-list > li:eq(0) > input').count()).toBe(1);
             expect(element('ul#todo-list > li:eq(0) > input.edit:visible').count()).toBe(0);
             expect(element('ul#todo-list > li:eq(0) > input.edit:focus').count()).toBe(0);
-            expect(element('ul#todo-list > li.editing').count()).toBe(0);
+            expect(element('ul#todo-list > li:eq(0).editing').count()).toBe(0);
 
             // act
             jQueryFunction('ul#todo-list > li:eq(0) > div > label', 'dblclick');
 
             // assert
             expect(element('ul#todo-list > li:eq(0) > input.edit:visible').count()).toBe(1);
-            expect(element('ul#todo-list > li.editing').count()).toBe(1);
+            expect(element('ul#todo-list > li:eq(0).editing').count()).toBe(1);
         });
 
     });
@@ -96,21 +96,25 @@ describe('Starting application', function() {
             expect(element('ul#todo-list > li:eq(0) > input.edit:focus').count()).toBe(1);
         });
         it("Should be able to save new value on blur", function() {
+
             expect(element('ul#todo-list > li:eq(0) > input.edit').count()).toBe(1);
             jQueryFunction('ul#todo-list > li:eq(0) > input.edit', 'val', ' a first todo changed ');
             jQueryFunction('ul#todo-list > li:eq(0) > input.edit', 'change');
+
+            // blur
             jQueryFunction('ul#todo-list > li:eq(1) > div > label', 'dblclick');
+
+            // new value saved contains text entered
             expect(element('ul#todo-list > li:eq(0) > div > label').text()).toContain('a first todo changed');
+
         });
         it("new entered value should be trimmed", function() {
+            // new value saved is exactly equals to the trimmed text.
             expect(element('ul#todo-list > li:eq(0) > div > label').text()).toBe('a first todo changed');
         });
         it("editing class should be removed", function() {
-            jQueryFunction('input#new-todo', 'val', 'a first todo');
-            jQueryFunction('input#new-todo', 'change');
-            pause();
-            expect(element('ul#todo-list > li').count()).toBe(2);
-            expect(element('ul#todo-list > li.editing').count()).toBe(0);
+            expect(element('ul#todo-list > li:eq(0)').count()).toBe(1);
+            expect(element('ul#todo-list > li:eq(0).editing').count()).toBe(0);
         });
     });
 });
