@@ -95,8 +95,19 @@ describe('Starting application', function() {
         it("Should set the focus on the edited element", function() {
             expect(element('ul#todo-list > li:eq(0) > input.edit:focus').count()).toBe(1);
         });
-        it("Should be able to save new value on blur", function() {
+        it("Should be able to save new value on enter", function() {
+            expect(element('ul#todo-list > li:eq(0) > input.edit').count()).toBe(1);
+            jQueryFunction('ul#todo-list > li:eq(0) > input.edit', 'val', 'changeValueOnEnter');
+            jQueryFunction('ul#todo-list > li:eq(0) > input.edit', 'change');
 
+            // blur
+            fireEnterOn('ul#todo-list > li:eq(0) > input.edit');
+
+            // new value saved contains text entered
+            expect(element('ul#todo-list > li:eq(0) > div > label').text()).toContain('changeValueOnEnter');
+        });
+        it("Should be able to save new value on blur", function() {
+            jQueryFunction('ul#todo-list > li:eq(0) > div > label', 'dblclick');
             expect(element('ul#todo-list > li:eq(0) > input.edit').count()).toBe(1);
             jQueryFunction('ul#todo-list > li:eq(0) > input.edit', 'val', ' a first todo changed ');
             jQueryFunction('ul#todo-list > li:eq(0) > input.edit', 'change');
@@ -117,4 +128,48 @@ describe('Starting application', function() {
             expect(element('ul#todo-list > li:eq(0).editing').count()).toBe(0);
         });
     });
+    describe('Mark all as complete', function() {
+        it('Should mark all as complete', function() {
+            expect(element('input.toggle:checked').count()).toBe(1);
+            expect(element('input#toggle-all:checked').count()).toBe(0);
+            jQueryFunction('#toggle-all', 'click');
+
+            // the
+            expect(element('input.toggle:checked').count()).toBe(2);
+            expect(element('input#toggle-all:checked').count()).toBe(1);
+        });
+       it('Should un-mark all as complete', function() {
+           expect(element('input.toggle:checked').count()).toBe(2);
+           expect(element('input#toggle-all:checked').count()).toBe(1);
+           jQueryFunction('#toggle-all', 'click');
+
+           // the
+           expect(element('input.toggle:checked').count()).toBe(0);
+           expect(element('input#toggle-all:checked').count()).toBe(0);
+        });
+        it('Should toggle if todos are one by one checked as complete', function() {
+            expect(element('input.toggle:checked').count()).toBe(0);
+            expect(element('input#toggle-all:checked').count()).toBe(0);
+
+            jQueryFunction('input.toggle:eq(0)', 'click');
+            jQueryFunction('input.toggle:eq(1)', 'click');
+
+            expect(element('input.toggle:checked').count()).toBe(2);
+            expect(element('input#toggle-all:checked').count()).toBe(1);
+
+        });
+        it('Should toggle if todos are one by one checked as un-complete', function() {
+            expect(element('input.toggle:checked').count()).toBe(2);
+            expect(element('input#toggle-all:checked').count()).toBe(1);
+
+            jQueryFunction('input.toggle:eq(0)', 'click');
+            jQueryFunction('input.toggle:eq(1)', 'click');
+
+            expect(element('input.toggle:checked').count()).toBe(0);
+            expect(element('input#toggle-all:checked').count()).toBe(0);
+        });
+    });
+/*    describe('Counter', function() {
+
+    });*/
 });
