@@ -30859,6 +30859,14 @@
 		};
 	});
 
+    angular.scenario.dsl('clearLocalStorage', function() {
+        return function(key) {
+            return this.addFutureAction("clear localStorage", function($window, $document, done) {
+                done(null, localStorage.clear());
+            });
+        };
+    });
+
 	angular.scenario.dsl('activateXHRlog', function() {
 		return function() {
 			var args = Array.prototype.slice.call(arguments, 2);

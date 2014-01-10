@@ -26,14 +26,16 @@ describe('Starting application', function() {
             browser().navigateTo("/localstorage/" + QueryString.fw);
 
 
-            expect(repeater('section#main').count()).toEqual(1);
+            //ensure the page is displayed
+            expect(repeater('section#todoapp').count()).toEqual(1);
+
+            //ensure the main section is not visible
             expect(element('section#main:visible').count()).toBe(0);
         });
         it('Should NOT display footer section when there are no item', function() {
-            // set up
-            expect(repeater('footer#footer').count()).toEqual(1);
+            expect(repeater('section#todoapp').count()).toEqual(1);
             expect(element('footer#footer:visible').count()).toBe(0);
-
+            expect(element('section#main:visible').count()).toBe(0);
         });
     });
     describe('New todo', function() {
@@ -46,30 +48,36 @@ describe('Starting application', function() {
             jQueryFunction('input#new-todo', 'val', 'a first todo');
             jQueryFunction('input#new-todo', 'change');
             expect(element('input#new-todo').val()).toBe('a first todo');
+
             fireEnterOn('input#new-todo');
+
             expect(element('input#new-todo').val()).toBe('');
             expect(element('section#main:visible').count()).toBe(1);
             expect(element('ul#todo-list > li').count()).toBe(1);
-            expect(element('ul#todo-list > li:eq(0) > div > label').text()).toBe('a first todo');
+            expect(element('#todo-list label:eq(0)').text()).toBe('a first todo');
         });
         it('Should trim() the text when adding a new todo', function() {
             jQueryFunction('input#new-todo', 'val', ' a second todo ');
             jQueryFunction('input#new-todo', 'change');
             fireEnterOn('input#new-todo');
             expect(element('ul#todo-list > li').count()).toBe(2);
-            expect(element('ul#todo-list > li:eq(1) > div > label').text()).toBe('a second todo');
+            expect(element('#todo-list  label:eq(1)').text()).toBe('a second todo');
+
+        });
+        it('Should display main and footer if todo list is NOT empty', function() {
+            expect(element('footer#footer:visible').count()).toBe(1);
+            expect(element('footer#footer:visible').count()).toBe(1);
 
         });
     });
     describe('Item', function() {
         it("Clicking the checkbox strikethrough the todo and toggling the class completed on it's parent <li>", function() {
             expect(element('li.completed').count()).toBe(0);
-            expect(element('ul#todo-list > li:eq(0) > div > label').css("text-decoration")).not().toContain('line-through');
+            expect(element('#todo-list label:eq(0)').css("text-decoration")).not().toContain('line-through');
 
-            jQueryFunction('ul#todo-list > li:eq(0) > div > input', 'click');
+            jQueryFunction('#todo-list input:eq(0)', 'click');
             expect(element('li.completed').count()).toBe(1);
-            expect(element('ul#todo-list > li:eq(0) > div > label').css("text-decoration")).toContain('line-through');
-
+            expect(element('#todo-list  label:eq(0)').css("text-decoration")).toContain('line-through');
         });
         it("Should NOT display the delete button by default", function() {
             expect(element('button.destroy').count()).toBe(2);
@@ -83,7 +91,7 @@ describe('Starting application', function() {
             expect(element('ul#todo-list > li:eq(0).editing').count()).toBe(0);
 
             // act
-            jQueryFunction('ul#todo-list > li:eq(0) > div > label', 'dblclick');
+            jQueryFunction('#todo-list label:eq(0)', 'dblclick');
 
             // assert
             expect(element('ul#todo-list > li:eq(0) > input.edit:visible').count()).toBe(1);
@@ -104,28 +112,30 @@ describe('Starting application', function() {
             fireEnterOn('ul#todo-list > li:eq(0) > input.edit');
 
             // new value saved contains text entered
-            expect(element('ul#todo-list > li:eq(0) > div > label').text()).toContain('changeValueOnEnter');
+            expect(element('#todo-list label:eq(0)').text()).toContain('changeValueOnEnter');
         });
         it("Should be able to save new value on blur", function() {
-            jQueryFunction('ul#todo-list > li:eq(0) > div > label', 'dblclick');
+            jQueryFunction('#todo-list label:eq(0)', 'dblclick');
+
             expect(element('ul#todo-list > li:eq(0) > input.edit').count()).toBe(1);
             jQueryFunction('ul#todo-list > li:eq(0) > input.edit', 'val', ' a first todo changed ');
             jQueryFunction('ul#todo-list > li:eq(0) > input.edit', 'change');
 
-            // blur
-            jQueryFunction('ul#todo-list > li:eq(1) > div > label', 'dblclick');
+            //blur the first todo by editing/submitting second todo
+            jQueryFunction('label:contains("a second todo")', 'dblclick');;
+            fireEnterOn('li:eq(1) input');
 
             // new value saved contains text entered
-            expect(element('ul#todo-list > li:eq(0) > div > label').text()).toContain('a first todo changed');
+            expect(element('#todo-list label:eq(0)').text()).toContain('a first todo changed');
 
         });
         it("new entered value should be trimmed", function() {
             // new value saved is exactly equals to the trimmed text.
-            expect(element('ul#todo-list > li:eq(0) > div > label').text()).toBe('a first todo changed');
+            expect(element('#todo-list label:eq(0)').text()).toBe('a first todo changed');
         });
         it("editing class should be removed", function() {
-            expect(element('ul#todo-list > li:eq(0)').count()).toBe(1);
-            expect(element('ul#todo-list > li:eq(0).editing').count()).toBe(0);
+            expect(element('#todo-list > li:eq(0)').count()).toBe(1);
+            expect(element('#todo-list > li:eq(0).editing').count()).toBe(0);
         });
     });
     describe('Mark all as complete', function() {
@@ -134,7 +144,6 @@ describe('Starting application', function() {
             expect(element('input#toggle-all:checked').count()).toBe(0);
             jQueryFunction('#toggle-all', 'click');
 
-            // the
             expect(element('input.toggle:checked').count()).toBe(2);
             expect(element('input#toggle-all:checked').count()).toBe(1);
         });
@@ -169,7 +178,28 @@ describe('Starting application', function() {
             expect(element('input#toggle-all:checked').count()).toBe(0);
         });
     });
-/*    describe('Counter', function() {
+    describe('Counter', function() {
+        it('Should pluralize item word when there is more than one item left', function() {
+            expect(element('#todo-count').text()).toBe("2 items left");
+        });
+        it('Should NOT pluralize item word when there is EXACTLY one item left', function() {
+            jQueryFunction('input.toggle:eq(0)', 'click');
+            expect(element('#todo-count').text()).toBe("1 item left");
+        });
+        it('Should write number in a strong way', function() {
+            expect(element('#todo-count strong').count()).toBe(1);
+        });
+    });
+    describe('Deletion', function() {
+        it('Should delete item when click on delete', function() {
+            //ensure the main section is not visible
+            expect(element('section#main:visible').count()).toBe(1);
 
-    });*/
+            jQueryFunction('button.destroy:eq(0)', 'click');
+            jQueryFunction('button.destroy:eq(0)', 'click');
+
+            //ensure the main section is not visible
+            expect(element('section#main:visible').count()).toBe(0);
+        });
+    });
 });
