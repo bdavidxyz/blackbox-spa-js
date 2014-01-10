@@ -30910,6 +30910,32 @@
 		};
 	});
 
+    angular.scenario.dsl('windowLocalStorage', function() {
+
+        var chain = {};
+        chain.getItem = function() {
+            return this.addFutureAction("localStorage.getItem " + chain.item,
+                function($window, $document, done) {
+                    try {
+                        done(null, localStorage.getItem(chain.item));
+                    } catch (e) {
+                        done(null, 0);
+                    }
+                });
+        };
+        chain.clear = function() {
+            return this.addFutureAction("clear localStorage ",
+                function($window, $document, done) {
+                    localStorage.clear();
+                    done(null, 0);
+                });
+        };
+        return function(item) {
+            chain.item = item;
+            return chain;
+        };
+    });
+
 	angular.scenario.dsl('lastRequest', function() {
 
 		var chain = {};
