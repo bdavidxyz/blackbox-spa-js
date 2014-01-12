@@ -32,11 +32,6 @@ blackbox testing framework of any Single Page Application written in JS.
 - Samples under test are all part of the TodoMVC project.
 
 
-## Limitations
-
-- The system under test runs in a iframe, which could be sometime a problem.
-- Mouse gesture can not be simulated
-- As of now, only MVC frameworks that integrates nicely with jQuery can use the tool.
 
 
 ## Docs
@@ -67,6 +62,12 @@ expect(windowLocalStorage("todos-" + QueryString.fw).getItem()).not().toContain(
 Run the examples
 
 - in order to run the examples, at the root of the examples directory, run 
+
+## Limitations
+
+- The system under test runs in a iframe, which could be sometime a problem.
+- Mouse gesture can not be simulated
+- As of now, only MVC frameworks that integrates nicely with jQuery can use the tool.
 
 
 ## TODOs :

@@ -13,6 +13,7 @@
 /*global pause */
 /*global fireEnterOn */
 /*global QueryString */
+/*global windowLocalStorage */
 
 "use strict";
 
@@ -214,6 +215,7 @@ describe('Starting application', function() {
             expect(element('input.toggle').count()).toBe(1);
         });
         it('Should be hidden when there are no completed TODOs', function() {
+            expect(element('input.toggle').count()).toBe(1);
             expect(element('#clear-completed:visible').count()).toBe(0);
         });
     });
