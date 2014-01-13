@@ -21,19 +21,6 @@ blackbox testing framework of any Single Page Application written in JS.
 - Such a tool must be technology agnostic, so that the functionnal test suite could be kept "as is" when upgrading or changing MVC framework.
 
 
-## Sample
-
-- The main sample is under
-
-
-## Credits
-
-- blackbox-spa is forked from the [ngScenario](https://github.com/angular/bower-angular-scenario). However, ngScenario can not be used outside the Angular world. The tool has been hacked so that any javascript application could be blackbox-tested.
-- Samples under test are all part of the TodoMVC project.
-
-
-
-
 ## Docs
 
 - BlackboxJS is a fork of [ngScenario](https://github.com/angular/bower-angular-scenario), so all docs about how to install, how to run, etc, applies.
@@ -59,9 +46,11 @@ expect(windowLocalStorage("todos-" + QueryString.fw).getItem()).not().toContain(
 ~~~
 
 
-Run the examples
-
-- in order to run the examples, at the root of the examples directory, run 
+## Run the examples
+1. Download the project
+2. Install [node and npm](http://www.nodejs.org)
+3. Go to the example folder and run `npm install` 
+4. Run `node app.js` 
 
 ## Limitations
 
@@ -69,11 +58,16 @@ Run the examples
 - Mouse gesture can not be simulated
 - As of now, only MVC frameworks that integrates nicely with jQuery can use the tool.
 
+## Credits
+
+- blackbox-spa is a fork from [ngScenario](https://github.com/angular/bower-angular-scenario). However, ngScenario can not be used outside the Angular world. The tool has been hacked so that any javascript application could be blackbox-tested.
+- Samples under test are all part of the TodoMVC project.
 
 ## TODOs :
 
 - Extends the matchers so that any JS object can be easily asserted
 - Find a way to trigger the events without jQuery
+- Build a website with demo
 
 ## Final word
 
